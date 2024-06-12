@@ -33,6 +33,40 @@ app.use((req, res, next) => {
   APPLICATION ROUTES
 */
 
+// receives new partner information from the frontend
+
+app.post('/add-partner', (req, res) => {
+  const parcel = req.body;
+  const {name, thumbnailUrl, description, isActive} = parcel;
+  if (!parcel) {
+    return res.status(400).send({status: 'failed'});
+  }
+    partners[name] = { // Add the parcel data to the partners object
+      thumbnailUrl: thumbnailUrl,
+      name: name,
+      description: description,
+      isActive: isActive
+    };
+    res.status(200).send({status: 'received', name: name});
+
+  
+});
+
+
+app.post('/del-partner', (req, res) => {
+  const parcel = req.body;
+  const {name, thumbnailUrl, description, isActive, action} = parcel;
+  if (!parcel) {
+    return res.status(400).send({status: 'failed'});
+  } 
+  if (partners[name]) {
+    delete partners[name];
+    res.status(200).send({ status: 'received', name: name, action: 'deleted' });
+  } else {
+    res.status(404).send({ status: 'failed', message: 'Partner not found' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.status(200).send(partners);
 })
